@@ -9,7 +9,7 @@ def extract_pdf_link(file):
     """Search for the PDF links and download the financial reports, rename the report to the format {abn}_{year}.pdf
     The function update links that are completed, to allow it to resume to the last checkpoints in the future (in case
     there are connection errors, disruptions)"""
-    content = open(file).read()
+    content = open(file, encoding='ISO-8859-1').read()
     soup = BeautifulSoup(content)
 
     # extract the ABN

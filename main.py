@@ -11,7 +11,7 @@ from constants import *
 from utilities import extract_pdf_link, extract_urls_from_file
 
 # Update this to skip a phase
-starting_phase = 2
+starting_phase = 1
 
 # Resume from the last abn
 all_abns = open(DATA_LOC + 'all_abns.txt').read().split()
@@ -19,13 +19,13 @@ all_abns = open(DATA_LOC + 'all_abns.txt').read().split()
 if starting_phase == 1:
     print("Starting phase 1...")
 
+    fh_existed = open(DATA_LOC + 'abn_existed_curl.txt', 'a')
     # Retrieve the status of curl links
     try:
         abn_existed_curl = open(DATA_LOC + 'abn_existed_curl.txt').read().split()
     except FileNotFoundError:
         # first time running
         abn_existed_curl = []
-        fh_existed = open(DATA_LOC + 'abn_existed_curl.txt', 'w')
 
     # Remaining abns that need to have curl prepared
     remaining_abn_curl = list(set(all_abns) - set(abn_existed_curl))
@@ -49,12 +49,13 @@ if starting_phase == 1:
 if starting_phase <= 2:
     print("Starting phase 2...")
 
+    fh_existed = open(DATA_LOC + 'abn_existed_links.txt', 'a')
+
     try:
         abn_existed_links = open(DATA_LOC + 'abn_existed_links.txt').read().split()
     except FileNotFoundError:
         # first time running
         abn_existed_links = []
-        fh_existed = open(DATA_LOC + 'abn_existed_links.txt', 'w')
 
     for file in os.listdir(CURL_OUTPUT):
         abn = file.split('.')[0]
@@ -68,11 +69,13 @@ if starting_phase <= 2:
 
 if starting_phase <= 3:
     print("Starting phase 3...")
+
+    fh_downloaded =open(FINAL_OUTPUT + 'abn_pdf_downloaded.txt', 'a')
+
     try:
         abn_pdf_downloaded = open(FINAL_OUTPUT + 'abn_pdf_downloaded.txt', 'r').read().split()
     except FileNotFoundError:
         abn_pdf_downloaded = []
-        fh_downloaded =open(FINAL_OUTPUT + 'abn_pdf_downloaded.txt', 'w')
 
     for file in os.listdir(ALL_PAGES):
         abn=file.split('.')[0]
@@ -80,6 +83,6 @@ if starting_phase <= 3:
             extract_pdf_link(ALL_PAGES + file)
 
             abn_pdf_downloaded.append(abn)
-            fh_downloaded.writable(abn+"\n")
+            fh_downloaded.write(abn+"\n")
 
     fh_downloaded.close()
